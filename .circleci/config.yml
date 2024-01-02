@@ -2,4 +2,23 @@ version: 2.1
 
 # if tab - one level of nesting
 orbs:
-  node: circleci/node@5.0.1    
+  node: circleci/node@5.0.1 
+
+jobs:
+  build:
+  # particular job is powered by docker
+    docker:
+      - image: cimg/node:16.10
+    steps: 
+    # - defines a list in yml
+    # checkout: tells CirciCI to pull out the source code
+      - checkout
+      - node/install-package
+        pkg-manager: npm
+      # | means there is multiple commands
+      - run: |
+          echo "Installing dependencies..."
+          npm install
+
+  test:
+  optional_publish:
