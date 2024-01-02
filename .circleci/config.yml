@@ -13,7 +13,7 @@ jobs:
     # - defines a list in yml
     # checkout: tells CirciCI to pull out the source code
       - checkout
-      - node/install-package
+      - node/install-packages:
         pkg-manager: npm
       # | means there is multiple commands
       - run: |
