@@ -32,11 +32,11 @@ jobs:
           npm test
   optional_publish:
 
-  workflows:
-    simple_workflow:
-      jobs:
-        - build
-        - test:
-        # requirement of only running test job after build job
+workflows:
+  simple_workflow:
+    jobs:
+      - build
+      - test:
+      # requirement of only running test job after build job
           requires: 
             - build
