@@ -45,37 +45,37 @@ jobs:
           image: hemma1108/dockehub-test
           tag: v1.0.1
 
-  deploy:
-    docker:
-      - image: cimg/node:16.10
-    steps:
-      - setup_remote_docker
-      - checkout
-      - heroku/install
-      - run: 
-          name: Heroku Container Push
-          command: |
-              heroku container:login
-              heroku container:push web -a hemma-nu-devops
-              heroku container:release web -a hemma-nu-devops
-  # pull-and-deploy:
+  # deploy:
   #   docker:
   #     - image: cimg/node:16.10
   #   steps:
   #     - setup_remote_docker
+  #     - checkout
   #     - heroku/install
-  #     - docker/pull:
-  #         images: hemma1108/dockehub-test:v1.0.1 
-  #     - run:
-  #         name: Heroku Container Push With Image From Docker Hub
+  #     - run: 
+  #         name: Heroku Container Push
   #         command: |
   #             heroku container:login
-  #             docker tag hemma1108/dockehub-test:v1.0.1  registry.heroku.com/hemma1108-nu-devops/web
-  #             #format --- docker tag <image name from docker hub> registry.heroku.com/<app-name>/web
-  #             docker push registry.heroku.com/hemma-nu-devops/web
-  #             #format --- docker push <registry.heroku.com/<app-name>/web [to push to heroku container registry]
+  #             heroku container:push web -a hemma-nu-devops
   #             heroku container:release web -a hemma-nu-devops
-  #             # release once in heroku container
+  pull-and-deploy:
+    docker:
+      - image: cimg/node:16.10
+    steps:
+      - setup_remote_docker
+      - heroku/install
+      - docker/pull:
+          images: hemma1108/dockehub-test:v1.0.1 
+      - run:
+          name: Heroku Container Push With Image From Docker Hub
+          command: |
+              heroku container:login
+              docker tag hemma1108/dockehub-test:v1.0.1  registry.heroku.com/hemma1108-nu-devops/web
+              #format --- docker tag <image name from docker hub> registry.heroku.com/<app-name>/web
+              docker push registry.heroku.com/hemma-nu-devops/web
+              #format --- docker push <registry.heroku.com/<app-name>/web [to push to heroku container registry]
+              heroku container:release web -a hemma-nu-devops
+              # release once in heroku container
 
 workflows:
   simple_workflow:
@@ -87,12 +87,9 @@ workflows:
       - publish:
           requires:
             - test
-      - deploy:
+      # - deploy:
+      #     requires:
+      #       - publish
+      - pull-and-deploy:
           requires:
             - publish
-
-
-
-        # - pull-and-deploy:
-        #     requires:
-        #       - publish
