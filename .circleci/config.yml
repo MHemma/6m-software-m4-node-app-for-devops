@@ -40,21 +40,44 @@ jobs:
       - docker/check
       - docker/build:
           image: hemma1108/dockehub-test
+          tag: v1.0.1
       - docker/push:
           image: hemma1108/dockehub-test
-  deploy:
+          tag: v1.0.1
+
+  # deploy:
+  #   docker:
+  #     - image: cimg/node:16.10
+  #   steps:
+  #     - setup_remote_docker
+  #     - checkout
+  #     - heroku/install
+  #     - run: 
+  #         name: Heroku Container Push
+  #         command: |
+  #             heroku container:login
+  #             heroku container:push web -a hemma-su-devops
+  #             heroku container:release web -a hemma-su-devops
+  pull-and-deploy:
     docker:
       - image: cimg/node:16.10
     steps:
       - setup_remote_docker
-      - checkout
       - heroku/install
-      - run: 
-          name: Heroku Container Push
+      - docker/pull:
+          images: hemma1108/dockehub-test:v1.0.1
+      - run:
+          name: Heroku Container Push With Image From Docker Hub
           command: |
               heroku container:login
-              heroku container:push web -a hemma-su-devops
-              heroku container:release web -a hemma-su-devops
+              docker tag hemma1108/dockehub-test:v1.0.1 registry.heroku.com/hemma1108-nu-devops/web
+              #format --- docker tag <image name from docker hub> registry.heroku.com/<app-name>/web
+              docker push registry.heroku.com/hemma-nu-devops/web
+              #format --- docker push <registry.heroku.com/<app-name>/web [to push to heroku container registry]
+              heroku container:release web -a hemma-nu-devops
+              # release once in heroku container
+
+          
 
 workflows:
   simple_workflow:
@@ -66,6 +89,6 @@ workflows:
       - publish:
           requires:
             - test
-      - deploy:
+      - pull-and-deploy:
           requires:
             - publish
