@@ -77,8 +77,6 @@ jobs:
   #             heroku container:release web -a hemma-nu-devops
   #             # release once in heroku container
 
-          
-
 workflows:
   simple_workflow:
     jobs:
@@ -90,8 +88,8 @@ workflows:
           requires:
             - test
       - deploy:
-        requires:
-          - publish
+          requires:
+            - publish
 
 
 
