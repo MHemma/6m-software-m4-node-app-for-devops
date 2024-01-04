@@ -38,10 +38,10 @@ jobs:
       - setup_remote_docker
       - checkout
       - docker/check
-     - docker/build:
-          image: hemma1108/education-space
+      - docker/build:
+          image: hemma1108/dockehub-test
       - docker/push:
-          image: hemma1108/education-space
+          image: hemma1108/dockehub-test
   deploy:
     docker:
       - image: cimg/node:16.10
@@ -68,4 +68,4 @@ workflows:
             - test
       - deploy:
           requires:
-            - test
+            - publish
