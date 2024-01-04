@@ -40,10 +40,10 @@ jobs:
       - docker/check
       - docker/build:
           image: hemma1108/dockehub-test
-          tag: v1.0.1
+          # tag: v1.0.1
       - docker/push:
           image: hemma1108/dockehub-test
-          tag: v1.0.1
+          # tag: v1.0.1
 
   deploy:
     docker:
