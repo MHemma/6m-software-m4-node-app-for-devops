@@ -56,8 +56,8 @@ jobs:
           name: Heroku Container Push
           command: |
               heroku container:login
-              heroku container:push web -a hemma-su-devops
-              heroku container:release web -a hemma-su-devops
+              heroku container:push web -a hemma-nu-devops
+              heroku container:release web -a hemma-nu-devops
   # pull-and-deploy:
   #   docker:
   #     - image: cimg/node:16.10
