@@ -70,7 +70,7 @@ jobs:
           name: Heroku Container Push With Image From Docker Hub
           command: |
               heroku container:login
-              docker tag hemma1108/dockehub-test:v1.0.1  registry.heroku.com/hemma1108-nu-devops/web
+              docker tag hemma1108/dockehub-test:v1.0.1  registry.heroku.com/hemma-nu-devops/web
               #format --- docker tag <image name from docker hub> registry.heroku.com/<app-name>/web
               docker push registry.heroku.com/hemma-nu-devops/web
               #format --- docker push <registry.heroku.com/<app-name>/web [to push to heroku container registry]
