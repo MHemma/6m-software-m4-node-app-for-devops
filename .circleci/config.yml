@@ -52,7 +52,6 @@ workflows:
     jobs:
       - build
       - test:
-      # requirement of only running test job after build job
           requires: 
             - build
       -deploy:
