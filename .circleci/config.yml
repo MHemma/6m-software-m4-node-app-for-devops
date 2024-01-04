@@ -44,7 +44,7 @@ jobs:
           name: Heroku Container Push
           command: |
               heroku container:login
-              keroku container:push web -a hemma-su-devops
+              heroku container:push web -a hemma-su-devops
               heroku container:release web -a hemma-su-devops
 
 workflows:
