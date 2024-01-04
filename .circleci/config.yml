@@ -3,6 +3,7 @@ version: 2.1
 # if tab - one level of nesting
 orbs:
   node: circleci/node@5.0.1 
+  heroku: circleci/heroku@2.0.0
 
 jobs:
   build:
@@ -32,6 +33,20 @@ jobs:
           npm test
   optional_publish:
 
+  deploy:
+    docker:
+      - image: cimg/node:16.10
+    steps:
+      - setup_remote_docker
+      - checkout
+      - heroku/install
+      - run: 
+          name: Heroku Container Push
+          command: |
+              heroku container: login
+              keroku container: push web -a hemma-su-devops
+              heroku container: reaease web -a hemma-su-devops
+
 workflows:
   simple_workflow:
     jobs:
@@ -40,3 +55,6 @@ workflows:
       # requirement of only running test job after build job
           requires: 
             - build
+      -deploy:
+          requires:
+            - test
