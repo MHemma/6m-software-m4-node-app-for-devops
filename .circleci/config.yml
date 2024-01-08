@@ -6,6 +6,12 @@ orbs:
   docker: circleci/docker@2.1.4
   heroku: circleci/heroku@2.0.0
 
+on:
+  push:
+    branches:
+      - main
+      - release
+
 jobs:
   build:
   # particular job is powered by docker
@@ -81,18 +87,33 @@ workflows:
   simple_workflow:
     jobs:
       - build:
-          filters 
-            only: 
-              
+          filters:
+            branchs: 
+              only: 
+                - main
+                - release
       - test:
+          filters:
+            branchs: 
+              only: 
+                - main
+                - release
           requires: 
             - build
       - publish:
+          filters:
+            branchs: 
+              only: 
+                - release
           requires:
             - test
       # - deploy:
       #     requires:
       #       - publish
       - pull-and-deploy:
+          filters:
+            branchs: 
+              only: 
+                - release
           requires:
             - publish
