@@ -80,7 +80,10 @@ jobs:
 workflows:
   simple_workflow:
     jobs:
-      - build
+      - build:
+          filters 
+            only: 
+              
       - test:
           requires: 
             - build
