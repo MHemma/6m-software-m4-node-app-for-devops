@@ -100,12 +100,12 @@ jobs:
 workflows:
   simple_workflow:
     jobs:
-      - build:
+      - build
       - test:
-          requires: 
+          requires:
             - build
       - scan:
-          requires: 
+          requires:
             - test
       - publish:
           requires:
