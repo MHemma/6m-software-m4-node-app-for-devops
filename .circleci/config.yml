@@ -7,11 +7,11 @@ orbs:
   snyk: snyk/snyk@1.5.0
   # heroku: circleci/heroku@2.0.0
 
-on:
-  push:
-    branches:
-      - main
-      - release
+# on:
+#   push:
+#     branches:
+#       - main
+#       - release
 
 jobs:
   build:
@@ -52,7 +52,6 @@ jobs:
       - run: docker build -t $IMAGE_NAME .
       - snyk/scan:
           docker-image-name: $IMAGE_NAME
-
   publish:
     executor: docker/docker
     steps:
