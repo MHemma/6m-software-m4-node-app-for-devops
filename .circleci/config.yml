@@ -1,0 +1,152 @@
+version: 2.1
+
+# if tab - one level of nesting
+orbs:
+  node: circleci/node@5.0.1 
+  docker: circleci/docker@2.1.4
+  snyk: snyk/snyk@1.5.0
+  # heroku: circleci/heroku@2.0.0
+
+# on:
+#   push:
+#     branches:
+#       - main
+#       - release
+
+jobs:
+  build:
+  # particular job is powered by docker
+    docker:
+      - image: cimg/node:16.10
+    steps: 
+    # - defines a list in yml
+    # checkout: tells CirciCI to pull out the source code
+      - checkout
+      - node/install-packages:
+        pkg-manager: npm
+      # | means there is multiple commands
+      - run: |
+          echo "Installing dependencies..."
+          npm install
+
+  test:
+    docker:
+      - image: cimg/node:16.10
+    steps:
+      - checkout
+      - node/install-packages:
+        pkg-manager: npm
+      - run: |
+          echo "Running tests..."
+          npm test
+  scan:
+    docker: 
+      - image: cimg/node:16.10
+    environment:
+      IMAGE_NAME: hemma1108/dockehub-test
+    steps:
+      - checkout
+      - setup_remote_docker
+      - docker/check
+      # building an image with image name in folder with docker file
+      - run: docker build -t $IMAGE_NAME .
+      - snyk/scan:
+          docker-image-name: $IMAGE_NAME
+  publish:
+    executor: docker/docker
+    steps:
+      - setup_remote_docker
+      - checkout
+      - docker/check
+      - docker/build:
+          image: hemma1108/dockehub-test
+          tag: v1.0.1
+      - docker/push:
+          image: hemma1108/dockehub-test
+          tag: v1.0.1
+
+  # deploy:
+  #   docker:
+  #     - image: cimg/node:16.10
+  #   steps:
+  #     - setup_remote_docker
+  #     - checkout
+  #     - heroku/install
+  #     - run: 
+  #         name: Heroku Container Push
+  #         command: |
+  #             heroku container:login
+  #             heroku container:push web -a hemma-nu-devops
+  #             heroku container:release web -a hemma-nu-devops
+  pull-and-deploy:
+    docker:
+      - image: cimg/node:16.10
+    steps:
+      - setup_remote_docker
+      - heroku/install
+      - docker/pull:
+          images: hemma1108/dockehub-test:v1.0.1 
+      - run:
+          name: Heroku Container Push With Image From Docker Hub
+          command: |
+              heroku container:login
+              docker tag hemma1108/dockehub-test:v1.0.1  registry.heroku.com/hemma-nu-devops/web
+              #format --- docker tag <image name from docker hub> registry.heroku.com/<app-name>/web
+              docker push registry.heroku.com/hemma-nu-devops/web
+              #format --- docker push <registry.heroku.com/<app-name>/web [to push to heroku container registry]
+              heroku container:release web -a hemma-nu-devops
+              # release once in heroku container
+
+# workflows:
+#   simple_workflow:
+#     jobs:
+#       - build:
+#           # filters:
+#           #   branchs: 
+#           #     only: 
+#           #       - main
+#           #       - release
+#       - test:
+#           # filters:
+#           #   branchs: 
+#           #     only: 
+#           #       - main
+#           #       - release
+#           requires: 
+#             - build
+#       - scan:
+#           requires: 
+#             - test
+#       - publish:
+#           # filters:
+#           #   branchs: 
+#           #     only: 
+#           #       - release
+#           requires:
+#             - scan
+#       # - deploy:
+#       #     requires:
+#       #       - publish
+#       # - pull-and-deploy:
+#       #     filters:
+#       #       branchs: 
+#       #         only: 
+#       #           - release
+#       #     requires:
+#       #       - publish
+
+
+workflows:
+  simple_workflow:
+    jobs:
+      - build:
+      - test:
+          requires: 
+            - build
+      - scan:
+          requires: 
+            - test
+      - publish:
+          requires:
+            - scan
+   
