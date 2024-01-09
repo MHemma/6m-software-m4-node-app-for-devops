@@ -4,7 +4,8 @@ version: 2.1
 orbs:
   node: circleci/node@5.0.1 
   docker: circleci/docker@2.1.4
-  heroku: circleci/heroku@2.0.0
+  snyk: snyk/snyk@1.5.0
+  # heroku: circleci/heroku@2.0.0
 
 on:
   push:
@@ -38,6 +39,20 @@ jobs:
       - run: |
           echo "Running tests..."
           npm test
+  scan:
+    docker: 
+      - image: cimg/node:16.10
+    environment:
+      IMAGE_NAME: hemma1108/dockehub-test
+    steps:
+      - checkout
+      - setup_remote_docker
+      - docker/check
+      # building an image with image name in folder with docker file
+      - run: docker build -t $IMAGE_NAME .
+      - snyk/scan:
+          docker-image-name: $IMAGE_NAME
+
   publish:
     executor: docker/docker
     steps:
@@ -87,33 +102,36 @@ workflows:
   simple_workflow:
     jobs:
       - build:
-          filters:
-            branchs: 
-              only: 
-                - main
-                - release
+          # filters:
+          #   branchs: 
+          #     only: 
+          #       - main
+          #       - release
       - test:
-          filters:
-            branchs: 
-              only: 
-                - main
-                - release
+          # filters:
+          #   branchs: 
+          #     only: 
+          #       - main
+          #       - release
           requires: 
             - build
-      - publish:
-          filters:
-            branchs: 
-              only: 
-                - release
-          requires:
+      - scan:
+          requires: 
             - test
+      - publish:
+          # filters:
+          #   branchs: 
+          #     only: 
+          #       - release
+          requires:
+            - scan
       # - deploy:
       #     requires:
       #       - publish
-      - pull-and-deploy:
-          filters:
-            branchs: 
-              only: 
-                - release
-          requires:
-            - publish
+      # - pull-and-deploy:
+      #     filters:
+      #       branchs: 
+      #         only: 
+      #           - release
+      #     requires:
+      #       - publish
