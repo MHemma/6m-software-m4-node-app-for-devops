@@ -28,7 +28,6 @@ jobs:
       - run: |
           echo "Installing dependencies..."
           npm install
-
   test:
     docker:
       - image: cimg/node:16.10
@@ -40,7 +39,7 @@ jobs:
           echo "Running tests..."
           npm test
   scan:
-    docker: 
+    docker:
       - image: cimg/node:16.10
     environment:
       IMAGE_NAME: hemma1108/dockehub-test
@@ -48,7 +47,6 @@ jobs:
       - checkout
       - setup_remote_docker
       - docker/check
-      # building an image with image name in folder with docker file
       - run: docker build -t $IMAGE_NAME .
       - snyk/scan:
           docker-image-name: $IMAGE_NAME
@@ -110,4 +108,3 @@ workflows:
       - publish:
           requires:
             - scan
-   
