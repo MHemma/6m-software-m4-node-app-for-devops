@@ -1,0 +1,37 @@
+# workflows:
+#   simple_workflow:
+#     jobs:
+#       - build:
+#           # filters:
+#           #   branchs: 
+#           #     only: 
+#           #       - main
+#           #       - release
+#       - test:
+#           # filters:
+#           #   branchs: 
+#           #     only: 
+#           #       - main
+#           #       - release
+#           requires: 
+#             - build
+#       - scan:
+#           requires: 
+#             - test
+#       - publish:
+#           # filters:
+#           #   branchs: 
+#           #     only: 
+#           #       - release
+#           requires:
+#             - scan
+#       # - deploy:
+#       #     requires:
+#       #       - publish
+#       # - pull-and-deploy:
+#       #     filters:
+#       #       branchs: 
+#       #         only: 
+#       #           - release
+#       #     requires:
+#       #       - publish
